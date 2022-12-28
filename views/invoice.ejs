@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Invoice</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.js"></script>
+</head>
+
+<body>
+    <div id="invoice">
+        <!-- <h1>Invoice</h1> -->
+        <div id="invoice-header">
+            <img src="/images/logo-resized.png" alt="Logo" style="display: block; margin: 0 auto; width: 200px; height: 125px;">
+            <div id="invoice-header-info">
+              <p style="text-align: center;">
+                Ruko Kuta Mulia, Jalan Majapahit no 18B Kuta, Bali - Indonesia
+              </p>
+              <p style="text-align: center;">
+                Phone: 087860993141 or 081338717049 
+              </p>
+            </div>
+          </div>
+        <div id="invoice-info">
+            <p id="invoice-number" style="margin-bottom: 10px;">
+                <strong>Invoice Number:</strong> <%= invoiceNumber %>
+            </p>
+            <p id="invoice-date" style="margin-bottom: 10px;">
+                <strong>Invoice Date:</strong> <%= invoiceDate %>
+            </p>
+            <p id="invoice-doctor" style="margin-bottom: 10px">
+                <strong>Doctor:</strong> <%= doctor %>
+            </p>
+            <p id="invoice-nurse">
+                <strong>Nurse:</strong> <%= nurse %>
+            </p>
+        </div>
+        <table id="invoice-items">
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Total</th>
+            </tr>
+            <%  items.forEach((item) => {  %>
+                <tr>
+                    <td><%= item.itemName %></td>
+                    <td><%= item.qty %></td>
+                    <td><%= item.price %></td>
+                    <td><%= item.discount %></td>
+                    <td><%= item.total %></td>
+                </tr>
+            <% }) %>
+        </table>
+        <p id="invoice-total"> 
+            <strong>Total :</strong> <%= invoiceSum %>
+        </p>
+    </div>
+
+    <button id="download-pdf-button">Download PDF</button>
+    <script>
+        $(document).ready(function () {
+            $('#download-pdf-button').click(function () {
+                window.jsPDF = window.jspdf.jsPDF;
+                var doc = new jsPDF("l", "pt", "A4");
+                doc.html($('#invoice')[0], {
+                    callback: function() {
+                        doc.save('invoice.pdf');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

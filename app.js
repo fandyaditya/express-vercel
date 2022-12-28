@@ -1,16 +1,32 @@
 const express = require('express');
-const helmet = require('helmet');
-const { ErrorResponseObject } = require('./common/http');
-const routes = require('./routes');
-
 const app = express();
+const notion = require('./services/notion');
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(helmet());
-app.use('/', routes);
+// 082b5dc863a746559f867ff5ffe53b9c
 
-// default catch all handler
-app.all('*', (req, res) => res.status(404).json(new ErrorResponseObject('route not defined')));
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
 
-module.exports = app;
+// Set the static files directory
+app.use(express.static(__dirname + '/public'));
+
+// Set the routes
+app.get('/invoice', async function(req, res) {
+  // Get notion id and parse
+  const pageId = req.query.pageId;
+  const data = await notion.getData(pageId);
+
+  res.render('invoice', {
+    invoiceNumber: data.invoiceNumber,
+    invoiceDate: data.invoiceDate,
+    items: data.items,
+    invoiceSum: data.invoiceSum,
+    doctor: data.doctor,
+    nurse: data.nurse
+  });
+});
+
+// Start the server
+app.listen(3000, function() {
+  console.log('Listening on port 3000');
+});
