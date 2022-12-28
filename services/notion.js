@@ -36,9 +36,12 @@ const getData = async (pageId) => {
 const getExamTreatments = async (examinationId) => {
     const dbId = "49c1892a-0006-4d2c-be25-b08b9a54e300";
     const filter = {
-       Examination: examinationId
+       property: 'Examination',
+       relation: {
+        contains: examinationId
+       }
     }
-    const data = await notion.databases.query({database_id: dbId}, filter);
+    const data = await notion.databases.query({database_id: dbId, filter});
     const mappedItem = data.results.map((item) => {
         const itemData = item.properties;
         return { 
